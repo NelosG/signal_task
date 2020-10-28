@@ -28,6 +28,7 @@ public:
       other.unlink();
       change_enclosing_iterators(
           other, [&](auto) { return followers_list::iterator(this); });
+      other.disconnect();
     }
     void disconnect() noexcept {
       if(isLinked()) {
@@ -49,6 +50,7 @@ public:
         other.unlink();
         change_enclosing_iterators(
             other, [&](auto) { return followers_list::iterator(this); });
+        other.disconnect();
       }
       return *this;
     }
@@ -80,6 +82,7 @@ public:
     for (iteration_stack *el = top_iterator; el != nullptr; el = el->next) {
       el->sig = nullptr;
     }
+    followers.~followers();
   }
 
   connection connect(slot_t slot) noexcept {
