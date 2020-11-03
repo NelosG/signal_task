@@ -22,11 +22,13 @@ add_subdirectory(
   EXCLUDE_FROM_ALL
 )
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address,undefined -D_GLIBCXX_DEBUG")
 
 add_executable(signal_testing
     signals.h
     signals_testing.cpp)
+
+add_compile_options(signals_testing -fsanitize=address)
+
 
 set_property(TARGET signal_testing PROPERTY CXX_STANDARD 17)
 

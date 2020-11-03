@@ -24,18 +24,18 @@ public:
 
     connection(connection &&other) noexcept
         : slot(std::move(other.slot)), sig(other.sig) {
-      sig->followers.insert(followers_list::iterator(&other), *this);
+      sig->followers.insert((typename followers_list::iterator)(&other), *this);
       other.unlink();
       change_enclosing_iterators(
-          other, [&](auto) { return followers_list::iterator(this); });
+          other, [&](auto) { return ( typename followers_list::iterator)(this); });
       other.disconnect();
     }
     void disconnect() noexcept {
-      if(isLinked()) {
+      if(this->isLinked()) {
 
         change_enclosing_iterators(*this,
                                    [](auto cur) { return std::next(cur); });
-        unlink();
+        this->unlink();
         slot = {};
         sig = nullptr;
       }
@@ -46,10 +46,10 @@ public:
         disconnect();
         sig = other.sig;
         slot = std::move(other.slot);
-        sig->followers.insert(followers_list::iterator(&other), *this);
+        sig->followers.insert( (typename followers_list::iterator)(&other), *this);
         other.unlink();
         change_enclosing_iterators(
-            other, [&](auto) { return followers_list::iterator(this); });
+            other, [&](auto) { return  (typename followers_list::iterator)(this); });
         other.disconnect();
       }
       return *this;
@@ -61,7 +61,7 @@ public:
     template <class IteratorSupplier>
     void change_enclosing_iterators(const connection &other,
                                     IteratorSupplier supplier) const noexcept {
-      if (isLinked())
+      if (this->isLinked())
         for (iteration_stack *el = sig->top_iterator; el; el = el->next)
           if (el->current != sig->followers.end() && &*el->current == &other) {
             el->current = supplier(el->current);
@@ -82,7 +82,7 @@ public:
     for (iteration_stack *el = top_iterator; el != nullptr; el = el->next) {
       el->sig = nullptr;
     }
-    followers.~followers();
+    followers.~followers_list();
   }
 
   connection connect(slot_t slot) noexcept {
